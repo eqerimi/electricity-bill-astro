@@ -1,0 +1,22 @@
+---
+import BillForm from "../components/BillForm";
+const title = "Kosovo Electricity Bill Calculator";
+---
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>{title}</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+  </head>
+  <body style="font-family: system-ui, Arial, sans-serif; margin: 2rem;">
+    <main style="max-width: 720px; margin: 0 auto;">
+      <h1 style="margin-bottom: 0.5rem;">{title}</h1>
+      <p style="color:#555; margin-top:0">
+        Enter your high-rate (A1) and low-rate (A2) kWh. Calculation runs on a Netlify Function.
+      </p>
+
+      <BillForm client:load />
+    </main>
+  </body>
+</html>
