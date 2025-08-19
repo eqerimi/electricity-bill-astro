@@ -10,12 +10,19 @@ const title = "Kosovo Electricity Bill Calculator";
     <meta name="viewport" content="width=device-width,initial-scale=1" />
   </head>
   <body style="font-family: system-ui, Arial, sans-serif; margin: 2rem;">
+    <nav style="margin-bottom:1rem;">
+      <a href="/" style="margin-right:0.75rem;">Home</a>
+      <a href="/about" style="margin-right:0.75rem;">About</a>
+      <a href="/docs">Docs</a>
+    </nav>
+
     <main style="max-width: 720px; margin: 0 auto;">
       <h1 style="margin-bottom: 0.5rem;">{title}</h1>
       <p style="color:#555; margin-top:0">
         Enter your high-rate (A1) and low-rate (A2) kWh. Calculation runs on a Netlify Function.
       </p>
 
+      <!-- React island -->
       <BillForm client:load />
     </main>
   </body>
