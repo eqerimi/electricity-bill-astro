@@ -18,47 +18,22 @@ const title = "About — Kosovo Electricity Bill Calculator";
     <main style="max-width: 800px; margin: 0 auto;">
       <h1 style="margin: 0 0 .5rem 0;">About this project</h1>
       <p style="color:#555; margin-top:0">
-        This calculator estimates household electricity bills in Kosovo using two-rate (A1/A2) consumption and block tariffs.
-        It’s designed to be <strong>fast</strong>, <strong>simple</strong>, and <strong>globally accessible</strong>.
+        This calculator estimates electricity bills in Kosovo using multi-group 2025 tariffs.
+        Frontend is <strong>Astro + React</strong>; pricing logic lives in a shared <strong>TypeScript module</strong>;
+        serverless API is a <strong>Netlify Function</strong>; tariffs are editable via JSON.
       </p>
 
-      <h2>How it works</h2>
+      <h2>Highlights</h2>
       <ul>
-        <li><strong>Frontend:</strong> <em>Astro</em> (static pages) with a small <em>React</em> “island” for the input form.</li>
-        <li><strong>Backend:</strong> a <em>Netlify Function</em> at <code>/.netlify/functions/calculate-bill</code> that performs the tariff math.</li>
-        <li><strong>Hosting:</strong> deployed on Netlify’s global CDN; every Git push triggers a new build.</li>
+        <li>Households (1-tariff & 2-tariff) with 0–800 kWh blocks.</li>
+        <li>Business groups including demand/reactive (where applicable).</li>
+        <li>JSON-driven tariffs → update prices without code changes.</li>
       </ul>
 
-      <h2>Tariff model (currently implemented)</h2>
-      <p>The serverless function applies the following constants (as coded):</p>
+      <h2>Disclaimer</h2>
       <ul>
-        <li><strong>Block threshold:</strong> 800 kWh / billing period</li>
-        <li><strong>A1 High rate — Block 1:</strong> €7.79 per 100 kWh</li>
-        <li><strong>A2 Low rate — Block 1:</strong> €3.34 per 100 kWh</li>
-        <li><strong>A1 High rate — Block 2:</strong> €13.29 per 100 kWh</li>
-        <li><strong>A2 Low rate — Block 2:</strong> €6.27 per 100 kWh</li>
-        <li><strong>Fixed tariff:</strong> €2.00</li>
-        <li><strong>Tax (TVSH):</strong> 8% applied to the net amount</li>
-      </ul>
-
-      <h2>Allocation logic</h2>
-      <p>
-        If total consumption ≤ 800 kWh, all energy is billed at Block&nbsp;1 tariffs.
-        If it exceeds 800 kWh, the first 800 kWh are billed at Block&nbsp;1 and the remainder at Block&nbsp;2.
-        The split between A1 (high) and A2 (low) within each block follows the <em>proportion</em> of your submitted A1/A2 usage.
-      </p>
-
-      <h2>Why Astro?</h2>
-      <p>
-        Astro ships minimal JavaScript by default, improving speed, SEO, and accessibility worldwide.
-        Interactivity is added only where needed (the calculator form), keeping the app lightweight.
-      </p>
-
-      <h2>Notes & disclaimer</h2>
-      <ul>
-        <li>This tool is for estimation and educational purposes.</li>
-        <li>Tariffs may change; update the constants in <code>netlify/functions/calculate-bill.ts</code> and redeploy.</li>
-        <li>All values are rounded to two decimals for display.</li>
+        <li>For estimation/education; official bills may differ.</li>
+        <li>Update <code>src/data/tariffs_2025.json</code> if tariffs change.</li>
       </ul>
 
       <p style="margin-top:2rem;color:#666;">Last updated: {new Date().toISOString().slice(0,10)}</p>

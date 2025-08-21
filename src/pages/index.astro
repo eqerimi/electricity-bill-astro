@@ -16,13 +16,11 @@ const title = "Kosovo Electricity Bill Calculator";
       <a href="/docs">Docs</a>
     </nav>
 
-    <main style="max-width: 720px; margin: 0 auto;">
+    <main style="max-width: 900px; margin: 0 auto;">
       <h1 style="margin-bottom: 0.5rem;">{title}</h1>
       <p style="color:#555; margin-top:0">
-        Enter your high-rate (A1) and low-rate (A2) kWh. Calculation runs on a Netlify Function.
+        Choose your tariff group and enter kWh. Calculation runs in a Netlify Function using JSON-configured 2025 tariffs.
       </p>
-
-      <!-- React island -->
       <BillForm client:load />
     </main>
   </body>

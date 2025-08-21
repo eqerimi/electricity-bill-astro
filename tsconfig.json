@@ -7,7 +7,9 @@
     "jsxImportSource": "react",
     "strict": true,
     "baseUrl": ".",
-    "types": ["astro/client"]
+    "types": ["astro/client"],
+    "resolveJsonModule": true,
+    "verbatimModuleSyntax": true
   },
   "include": ["src", "netlify/functions/**/*", "astro.config.mjs"]
 }

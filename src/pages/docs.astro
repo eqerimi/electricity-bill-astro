@@ -17,72 +17,54 @@ const title = "Docs — Kosovo Electricity Bill Calculator";
 
     <main style="max-width: 900px; margin: 0 auto;">
       <h1 style="margin: 0 0 .5rem 0;">API Documentation</h1>
-      <p style="color:#555; margin-top:0">
-        The calculator is exposed via a single HTTP endpoint hosted as a Netlify Function.
-      </p>
 
       <h2>Endpoint</h2>
       <pre><code>POST /.netlify/functions/calculate-bill
 Content-Type: application/json</code></pre>
 
-      <h3>Request body</h3>
+      <h2>Payloads</h2>
+      <h3>Household (2-tariff)</h3>
       <pre><code>{
-  "consumption_high_rate": &lt;number&gt;,  // A1 kWh (>= 0)
-  "consumption_low_rate":  &lt;number&gt;   // A2 kWh (>= 0)
-}</code></pre>
-      <ul>
-        <li>Both fields are optional in the handler (default to 0), but you should send numbers ≥ 0.</li>
-        <li>Values represent kWh for the billing period.</li>
-      </ul>
-
-      <h3>Response body</h3>
-      <pre><code>{
-  "total_consumption": number,
-  "consumption_high_rate": number,
-  "consumption_low_rate": number,
-  "cost_high": number,          // A1 cost in Block 1
-  "cost_low": number,           // A2 cost in Block 1
-  "cost_high_block2": number,   // A1 cost in Block 2 (if applicable)
-  "cost_low_block2": number,    // A2 cost in Block 2 (if applicable)
-  "fixed_tariff": number,
-  "net_amount": number,         // subtotal before tax
-  "tax": number,                // 8% of net
-  "final_bill": number          // net + tax
+  "group": "household_two",
+  "a1_kwh": 500,
+  "a2_kwh": 300
 }</code></pre>
 
-      <h2>Examples</h2>
-      <h3>cURL</h3>
+      <h3>Household (1-tariff)</h3>
+      <pre><code>{
+  "group": "household_one",
+  "total_kwh": 950
+}</code></pre>
+
+      <h3>Business dual-rate (35 kV or 10 kV)</h3>
+      <pre><code>{
+  "group": "group_1", // or "group_2"
+  "high_kwh": 1200,
+  "low_kwh": 600
+}</code></pre>
+
+      <h3>Business 0.4 kV Category I (demand/reactive optional)</h3>
+      <pre><code>{
+  "group": "group_3",
+  "high_kwh": 1200,
+  "low_kwh": 600,
+  "demand_kw": 50,
+  "reactive_kvarh": 1200
+}</code></pre>
+
+      <h3>Single-rate groups (4,7,8)</h3>
+      <pre><code>{
+  "group": "group_4", // or "group_7" | "group_8"
+  "total_kwh": 4200
+}</code></pre>
+
+      <h2>Response</h2>
+      <p>JSON with <code>fixed_fee</code>, <code>energy_cost</code>, <code>net_amount</code>, <code>tax</code>, <code>final_bill</code>, and group-specific breakdowns.</p>
+
+      <h2>cURL example</h2>
       <pre><code>curl -X POST "https://YOUR-SITE.netlify.app/.netlify/functions/calculate-bill" \
   -H "Content-Type: application/json" \
-  -d '{"consumption_high_rate":600,"consumption_low_rate":200}'</code></pre>
-
-      <h3>JavaScript (browser)</h3>
-      <pre><code>const res = await fetch("/.netlify/functions/calculate-bill", {
-  method: "POST",
-  headers: { "Content-Type": "application/json" },
-  body: JSON.stringify({ consumption_high_rate: 600, consumption_low_rate: 200 })
-});
-const data = await res.json();
-console.log(data.final_bill);</code></pre>
-
-      <h2>Errors</h2>
-      <ul>
-        <li><strong>405 Method Not Allowed</strong> — if you send something other than POST.</li>
-        <li><strong>400 Bad Request</strong> — invalid JSON payload or parsing error.</li>
-      </ul>
-
-      <h2>Implementation notes</h2>
-      <ul>
-        <li>Tariff constants live in <code>netlify/functions/calculate-bill.ts</code>.</li>
-        <li>Change them as needed and re-deploy; no other code changes required.</li>
-        <li>The function allocates A1/A2 portions proportionally across blocks.</li>
-        <li>Values are rounded to 2 decimals for display.</li>
-      </ul>
-
-      <h2>Versioning</h2>
-      <p>
-        When tariffs change, consider tagging releases (e.g., <code>v1.1</code>) and documenting the change in this page.
-      </p>
+  -d '{"group":"household_two","a1_kwh":600,"a2_kwh":200}'</code></pre>
 
       <p style="margin-top:2rem;color:#666;">Last updated: {new Date().toISOString().slice(0,10)}</p>
     </main>

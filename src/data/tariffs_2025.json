@@ -1,0 +1,62 @@
+{
+    "group_1": {
+      "supply_level": "35 kV",
+      "fixed_fee": 14.54,
+      "active_energy": { "high": 6.40, "low": 4.11 },
+      "reactive_energy": 0.83,
+      "units": { "fixed_fee": "€/month", "active_energy": "c€/kWh", "reactive_energy": "c€/kVArh" }
+    },
+    "group_2": {
+      "supply_level": "10 kV",
+      "fixed_fee": 7.26,
+      "active_energy": { "high": 7.64, "low": 4.80 },
+      "reactive_energy": 0.84,
+      "units": { "fixed_fee": "€/month", "active_energy": "c€/kWh", "reactive_energy": "c€/kVArh" }
+    },
+    "group_3": {
+      "supply_level": "0.4 kV Category I (with reactive energy)",
+      "fixed_fee": 3.34,
+      "demand_charge": 3.87,
+      "active_energy": { "high": 8.02, "low": 6.46 },
+      "reactive_energy": 0.85,
+      "units": { "fixed_fee": "€/month", "demand_charge": "€/kW", "active_energy": "c€/kWh", "reactive_energy": "c€/kVArh" }
+    },
+    "group_4": {
+      "supply_level": "0.4 kV Category II",
+      "fixed_fee": 3.87,
+      "active_energy": { "single": 6.90 },
+      "units": { "fixed_fee": "€/month", "active_energy": "c€/kWh" }
+    },
+    "group_5": {
+      "supply_level": "Household (2-tariff meter)",
+      "fixed_fee": 3.22,
+      "block_1": { "high": 9.25, "low": 3.88 },
+      "block_2": { "high": 12.24, "low": 5.08 },
+      "units": { "fixed_fee": "€/month", "active_energy": "c€/kWh" }
+    },
+    "group_6": {
+      "supply_level": "Household (1-tariff meter)",
+      "fixed_fee": 3.22,
+      "block_1": { "single": 7.82 },
+      "block_2": { "single": 10.24 },
+      "units": { "fixed_fee": "€/month", "active_energy": "c€/kWh" }
+    },
+    "group_7": {
+      "supply_level": "0.4 kV Household per meter",
+      "fixed_fee": 2.32,
+      "active_energy": { "single": 9.05 },
+      "units": { "fixed_fee": "€/month", "active_energy": "c€/kWh" }
+    },
+    "group_8": {
+      "supply_level": "Public Lighting",
+      "fixed_fee": 3.22,
+      "active_energy": { "single": 12.01 },
+      "units": { "fixed_fee": "€/month", "active_energy": "c€/kWh" }
+    },
+    "tariff_periods": {
+      "high_tariff": { "winter": "07:00–22:00 (Oct 1 – Mar 31)", "summer": "08:00–23:00 (Apr 1 – Sep 30)" },
+      "low_tariff": "All other hours",
+      "reactive_condition": "Applies if cos φ < 0.95"
+    }
+  }
+  

@@ -1,80 +1,68 @@
 import type { Handler } from "@netlify/functions";
+import tariffs from "../../src/data/tariffs_2025.json" assert { type: "json" };
+import { calculateForGroup, type CalcPayload } from "../../src/lib/billing";
 
-type Req = {
-  consumption_high_rate?: number;
-  consumption_low_rate?: number;
-};
+const ok = (obj: unknown) => ({
+  statusCode: 200,
+  headers: { "Content-Type": "application/json", ...cors() },
+  body: JSON.stringify(obj)
+});
 
-export const handler: Handler = async (event) => {
-  if (event.httpMethod !== "POST") {
-    return { statusCode: 405, body: "Method Not Allowed" };
-  }
-  try {
-    const data: Req = JSON.parse(event.body || "{}");
-    const consumptionHigh = Number(data.consumption_high_rate || 0);
-    const consumptionLow  = Number(data.consumption_low_rate || 0);
-    const invoice = calculateBill(consumptionHigh, consumptionLow);
-    return {
-      statusCode: 200,
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(invoice),
-    };
-  } catch (err: any) {
-    return { statusCode: 400, body: JSON.stringify({ error: err?.message || "Bad request" }) };
-  }
-};
+const bad = (status: number, msg: string) => ({
+  statusCode: status,
+  headers: { "Content-Type": "application/json", ...cors() },
+  body: JSON.stringify({ error: msg })
+});
 
-function calculateBill(consumption_high_rate: number, consumption_low_rate: number) {
-  const TARIFF_A1_BLOCK1 = 7.79;
-  const TARIFF_A2_BLOCK1 = 3.34;
-  const TARIFF_A1_BLOCK2 = 13.29;
-  const TARIFF_A2_BLOCK2 = 6.27;
-  const FIXED_TARIFF = 2.0;
-  const TAX_RATE = 0.08;
-  const BLOCK_THRESHOLD = 800;
+const preflight = () => ({ statusCode: 204, headers: cors() });
 
-  const total = consumption_high_rate + consumption_low_rate;
-
-  let allocHigh = 0, allocLow = 0;
-  if (total !== 0) {
-    allocHigh = consumption_high_rate / total;
-    allocLow = consumption_low_rate / total;
-  }
-
-  let costHigh = 0, costLow = 0, costHigh2 = 0, costLow2 = 0;
-
-  if (total <= BLOCK_THRESHOLD) {
-    costHigh = allocHigh * total * TARIFF_A1_BLOCK1 / 100;
-    costLow  = allocLow  * total * TARIFF_A2_BLOCK1 / 100;
-  } else {
-    costHigh = allocHigh * BLOCK_THRESHOLD * TARIFF_A1_BLOCK1 / 100;
-    costLow  = allocLow  * BLOCK_THRESHOLD * TARIFF_A2_BLOCK1 / 100;
-    const remainingHigh = allocHigh * (total - BLOCK_THRESHOLD);
-    const remainingLow  = allocLow  * (total - BLOCK_THRESHOLD);
-    costHigh2 = remainingHigh * TARIFF_A1_BLOCK2 / 100;
-    costLow2  = remainingLow  * TARIFF_A2_BLOCK2 / 100;
-  }
-
-  const totalCost = costHigh + costLow + costHigh2 + costLow2;
-  const netAmount = FIXED_TARIFF + totalCost;
-  const tax = netAmount * TAX_RATE;
-  const finalBill = netAmount + tax;
-
+function cors() {
   return {
-    total_consumption: total,
-    consumption_high_rate,
-    consumption_low_rate,
-    cost_high: round2(costHigh),
-    cost_low: round2(costLow),
-    cost_high_block2: round2(costHigh2),
-    cost_low_block2: round2(costLow2),
-    fixed_tariff: round2(FIXED_TARIFF),
-    net_amount: round2(netAmount),
-    tax: round2(tax),
-    final_bill: round2(finalBill),
+    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Methods": "POST, OPTIONS",
+    "Access-Control-Allow-Headers": "Content-Type"
   };
 }
 
-function round2(n: number) {
-  return Math.round(n * 100) / 100;
+export const handler: Handler = async (event) => {
+  if (event.httpMethod === "OPTIONS") return preflight();
+  if (event.httpMethod !== "POST") return bad(405, "Method Not Allowed");
+
+  try {
+    const body = JSON.parse(event.body || "{}") as CalcPayload | any;
+    const payload = patchLegacyPayload(body);
+    const result = calculateForGroup(tariffs as any, payload as CalcPayload);
+    return ok(result);
+  } catch (e: any) {
+    return bad(400, e?.message || "Bad request");
+  }
+};
+
+function patchLegacyPayload(body: any): CalcPayload {
+  if (body.group === "household_two" || (!body.group && (body.consumption_high_rate !== undefined || body.a1_kwh !== undefined))) {
+    return {
+      group: "household_two",
+      a1_kwh: Number(body.a1_kwh ?? body.consumption_high_rate ?? 0),
+      a2_kwh: Number(body.a2_kwh ?? body.consumption_low_rate ?? 0)
+    };
+  }
+  if (body.group === "household_one") {
+    return { group: "household_one", total_kwh: Number(body.total_kwh ?? 0) };
+  }
+  if (body.group === "group_1" || body.group === "group_2") {
+    return { group: body.group, high_kwh: Number(body.high_kwh ?? 0), low_kwh: Number(body.low_kwh ?? 0) };
+  }
+  if (body.group === "group_3") {
+    return {
+      group: "group_3",
+      high_kwh: Number(body.high_kwh ?? 0),
+      low_kwh: Number(body.low_kwh ?? 0),
+      demand_kw: body.demand_kw !== undefined ? Number(body.demand_kw) : undefined,
+      reactive_kvarh: body.reactive_kvarh !== undefined ? Number(body.reactive_kvarh) : undefined
+    };
+  }
+  if (body.group === "group_4" || body.group === "group_7" || body.group === "group_8") {
+    return { group: body.group, total_kwh: Number(body.total_kwh ?? 0) };
+  }
+  return { group: "household_two", a1_kwh: 0, a2_kwh: 0 };
 }
