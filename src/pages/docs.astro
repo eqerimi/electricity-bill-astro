@@ -1,5 +1,6 @@
 ---
 const title = "Docs — Kosovo Electricity Bill Calculator";
+const today = new Date().toISOString().slice(0, 10);
 ---
 
 <html lang="en">
@@ -23,40 +24,41 @@ const title = "Docs — Kosovo Electricity Bill Calculator";
 Content-Type: application/json</code></pre>
 
       <h2>Payloads</h2>
+
       <h3>Household (2-tariff)</h3>
-      <pre><code>{
+      <pre><code>&#123;
   "group": "household_two",
   "a1_kwh": 500,
   "a2_kwh": 300
-}</code></pre>
+&#125;</code></pre>
 
       <h3>Household (1-tariff)</h3>
-      <pre><code>{
+      <pre><code>&#123;
   "group": "household_one",
   "total_kwh": 950
-}</code></pre>
+&#125;</code></pre>
 
       <h3>Business dual-rate (35 kV or 10 kV)</h3>
-      <pre><code>{
+      <pre><code>&#123;
   "group": "group_1", // or "group_2"
   "high_kwh": 1200,
   "low_kwh": 600
-}</code></pre>
+&#125;</code></pre>
 
       <h3>Business 0.4 kV Category I (demand/reactive optional)</h3>
-      <pre><code>{
+      <pre><code>&#123;
   "group": "group_3",
   "high_kwh": 1200,
   "low_kwh": 600,
   "demand_kw": 50,
   "reactive_kvarh": 1200
-}</code></pre>
+&#125;</code></pre>
 
-      <h3>Single-rate groups (4,7,8)</h3>
-      <pre><code>{
+      <h3>Single-rate groups (4, 7, 8)</h3>
+      <pre><code>&#123;
   "group": "group_4", // or "group_7" | "group_8"
   "total_kwh": 4200
-}</code></pre>
+&#125;</code></pre>
 
       <h2>Response</h2>
       <p>JSON with <code>fixed_fee</code>, <code>energy_cost</code>, <code>net_amount</code>, <code>tax</code>, <code>final_bill</code>, and group-specific breakdowns.</p>
@@ -64,9 +66,9 @@ Content-Type: application/json</code></pre>
       <h2>cURL example</h2>
       <pre><code>curl -X POST "https://YOUR-SITE.netlify.app/.netlify/functions/calculate-bill" \
   -H "Content-Type: application/json" \
-  -d '{"group":"household_two","a1_kwh":600,"a2_kwh":200}'</code></pre>
+  -d '&#123;"group":"household_two","a1_kwh":600,"a2_kwh":200&#125;'</code></pre>
 
-      <p style="margin-top:2rem;color:#666;">Last updated: {new Date().toISOString().slice(0,10)}</p>
+      <p style="margin-top:2rem;color:#666;">Last updated: {today}</p>
     </main>
   </body>
 </html>
