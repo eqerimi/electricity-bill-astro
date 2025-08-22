@@ -29,9 +29,9 @@
     },
     "group_5": {
       "supply_level": "Household (2-tariff meter)",
-      "fixed_fee": 3.22,
-      "block_1": { "high": 9.25, "low": 3.88 },
-      "block_2": { "high": 12.24, "low": 5.08 },
+      "fixed_fee": 2.32,
+      "block_1": { "high": 9.05, "low": 3.88 },
+      "block_2": { "high": 15.43, "low": 7.28 },
       "units": { "fixed_fee": "€/month", "active_energy": "c€/kWh" }
     },
     "group_6": {
